@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Math Solver</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Welcome Screen Styles */
+        #welcome {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #welcome h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .glowing-button {
+            background-color: #3498db;
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.8);
+            height:100px;
+        }
+
+        .glowing-button:hover {
+            box-shadow: 0 0 25px rgba(52, 152, 219, 1);
+            background-color: #2980b9;
+        }
+
+        /* AI Math Solver Styles */
+        #calculator {
+            width: 400px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+            display: none; /* Hidden initially */
+        }
+
+        #display {
+            background-color: #333;
+            color: #fff;
+            font-size: 1.8rem;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+
+        #steps {
+            background-color: #f0f4f7;
+            color: #333;
+            font-size: 1rem;
+            text-align: left;
+            padding: 15px;
+            border-radius: 10px;
+            height: 150px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            white-space: pre-wrap;  /* Ensures line breaks in the text */
+            word-wrap: break-word;  /* Ensures long words break properly */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 48%;
+            height: 50px;
+            border-radius: 10px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #clear {
+            background-color: #e74c3c;
+        }
+
+        #clear:hover {
+            background-color: #c0392b;
+        }
+
+        #submit {
+            background-color: #2ecc71;
+        }
+
+        #submit:hover {
+            background-color: #27ae60;
+        }
+
+        /* Pop-up Styles */
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background:orange;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none; /* Hidden initially */
+        }
+
+        #popup button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        #popup button:hover {
+            background-color: #c0392b;
+        }
+
+        @media screen and (max-width: 480px) {
+            #calculator {
+                width: 100%;
+                padding: 15px;
+            }
+
+            button {
+                width: 48%;
+                font-size: 1rem;
+            }
+
+            input[type="text"] {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Welcome Screen -->
+    <div id="welcome">
+        <h1>Welcome to AI Math Solver!</h1>
+        <button class="glowing-button" id="get-started">Get Started</button>
+    </div>
+
+    <!-- AI Math Solver -->
+    <div id="calculator">
+        <div id="display">Enter your math question</div>
+        <div id="steps">AI will explain the steps here</div>
+        <input type="text" id="input" placeholder="Enter a math expression" />
+        <div class="button-row">
+            <button id="clear">Clear</button>
+            <button id="submit">Submit</button>
+        </div>
+    </div>
+
+    <!-- Pop-up -->
+    <div id="popup">
+        <h2>How to use AI Math Solver</h2>
+        <p>You can enter mathematical expressions like:</p>
+        <ul>
+            <li>Basic arithmetic (e.g., 2 + 2)</li>
+            <li>Algebraic equations (e.g., 2x + 3 = 7)</li>
+            <li>Square roots (e.g., sqrt(16))</li>
+            <li>Exponentiation (e.g., 2^3)</li>
+        </ul>
+        <button id="cancel">Cancel</button>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const stepsDisplay = document.getElementById('steps');
+        const inputField = document.getElementById('input');
+        const calculator = document.getElementById('calculator');
+        const welcome = document.getElementById('welcome');
+        const popup = document.getElementById('popup');
+        const getStartedBtn = document.getElementById('get-started');
+        const cancelBtn = document.getElementById('cancel');
+        let userQuery = '';
+
+        // Show AI Math Solver after getting started
+        getStartedBtn.addEventListener('click', () => {
+            welcome.style.display = 'none';
+            calculator.style.display = 'block';
+
+            // Show pop-up after 2 seconds
+            setTimeout(() => {
+                popup.style.display = 'block';
+            }, 2000);
+        });
+
+        // Close the pop-up and continue to solve math
+        cancelBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        // Clear input and results
+        document.getElementById('clear').addEventListener('click', () => {
+            inputField.value = '';
+            display.textContent = 'Enter your math question';
+            stepsDisplay.textContent = 'AI will explain the steps here';
+        });
+
+        // Handle input submission
+        document.getElementById('submit').addEventListener('click', () => {
+            userQuery = inputField.value.trim();
+            display.textContent = `You asked: ${userQuery}`;
+            stepsDisplay.textContent = 'Processing...';
+            processQuery(userQuery);
+        });
+
+        // Function to handle direct math expressions
+        function processQuery(query) {
+            if (query.includes('x') && query.includes('=')) {
+                solveEquation(query);  // Equation-solving mode
+            } else {
+                try {
+                    let result = evalMathExpression(query);  // Direct math expression evaluation
+                    display.textContent = `Result: ${result}`;
+                    stepsDisplay.textContent = `Step 1: To solve "${query}", we get the result ${result}.`;
+                } catch (error) {
+                    display.textContent = 'Error';
+                    stepsDisplay.textContent = 'Invalid expression';
+                }
+            }
+        }
+
+        // Evaluate basic math expression
+        function evalMathExpression(expression) {
+            expression = expression.replace(/sqrt/g, 'Math.sqrt');
+            expression = expression.replace(/\^/g, '**'); // Use ** for exponents
+            return eval(expression);  // Using eval for direct calculation
+        }
+
+        // Solve simple equations
+        function solveEquation(equation) {
+            let regex = /([0-9]+)x\s*([+-]?\s*[0-9]+)\s*=\s*([0-9]+)/;
+            let match = equation.match(regex);
+
+            if (match) {
+                let a = parseFloat(match[1]);
+                let b = parseFloat(match[2].replace(/\s/g, ''));
+                let c = parseFloat(match[3]);
+
+                let x = (c - b) / a;
+
+                display.textContent = `x = ${x}`;
+                stepsDisplay.textContent = `Step 1: Let's solve the equation "${equation}" step by step.\n
+                                             Step 2: First, isolate x. Subtract ${b} from both sides: \n
+                                             ${c} - ${b} = ${c - b} \n
+                                             Step 3: Now divide by ${a}: \n
+                                             x = (${c - b}) / ${a} = ${x} \n
+                                             Final answer: x = ${x}`;
+            } else {
+                display.textContent = 'Error';
+                stepsDisplay.textContent = 'Invalid equation format. Please use something like "2x + 3 = 7".';
+            }
+        }
+    </script>
+
+</body>
+</html>
